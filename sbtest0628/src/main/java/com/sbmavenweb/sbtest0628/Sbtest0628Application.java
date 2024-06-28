@@ -56,7 +56,7 @@ public class Sbtest0628Application {
                         break;
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                System.out.println("범위 내 숫자(1 ~ 9)로만 입력해주세요.");
             }
         }
     }

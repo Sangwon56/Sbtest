@@ -4,7 +4,6 @@ import com.sbmavenweb.sbtest0628.EPhoneGroup;
 import com.sbmavenweb.sbtest0628.IPhoneBook;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
@@ -36,7 +35,7 @@ public class PhoneBook implements IPhoneBook {
     @Override
     public String toString() {
         return String.format("id:%6d, 이름:%s, 그룹:%s, 번호:%s, 이메일:%s",
-                id, name, group, phoneNumber, email);
+                this.id, this.name, this.group, this.phoneNumber, this.email);
 
     }
 }

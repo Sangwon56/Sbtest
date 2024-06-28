@@ -68,6 +68,7 @@ public class ConsoleApplication {
     }
 
     public void insert(Scanner input) throws Exception {
+        System.out.println("!! 모든 정보 공백없이 입력 !!");
         System.out.println("--------");
         System.out.println("연락처 생성");
         System.out.println("--------");
@@ -78,8 +79,10 @@ public class ConsoleApplication {
         String phone = input.nextLine();
         System.out.print("이메일 :");
         String email = input.nextLine();
-
-        if (this.phoneBookService.insert(name, group, phone, email)) {
+        if (name.isEmpty() || phone.isEmpty() || email.isEmpty()) {
+            System.out.println("모든 정보를 공백없이 입력해야 합니다.");
+            return;
+        } else if (this.phoneBookService.insert(name, group, phone, email)) {
             this.phoneBookService.saveData();
             System.out.println("결과: 데이터 추가 성공되었습니다.");
         }
@@ -91,6 +94,7 @@ public class ConsoleApplication {
             System.out.println("에러: ID 데이터 가 존재하지 않습니다.");
             return;
         }
+        System.out.println("(수정을 원하지 않는 정보는 공백으로 유지)");
         System.out.print("연락처 이름 :");
         String name = input.nextLine();
         EPhoneGroup group = this.getGroupFromScanner(input, "");
@@ -98,10 +102,49 @@ public class ConsoleApplication {
         String phone = input.nextLine();
         System.out.print("이메일 :");
         String email = input.nextLine();
-        IPhoneBook update = PhoneBook.builder()
-                .id(result.getId()).name(name)
-                .group(group)
-                .phoneNumber(phone).email(email).build();
+
+        IPhoneBook update;
+        if (name.isEmpty() && phone.isEmpty() && email.isEmpty()) {
+            update = PhoneBook.builder()
+                    .id(result.getId()).name(result.getName())
+                    .group(group)
+                    .phoneNumber(result.getPhoneNumber()).email(result.getEmail()).build();
+        } else if (name.isEmpty() && phone.isEmpty()) {
+            update = PhoneBook.builder()
+                    .id(result.getId()).name(result.getName())
+                    .group(group)
+                    .phoneNumber(result.getPhoneNumber()).email(email).build();
+        } else if (name.isEmpty() && email.isEmpty()) {
+            update = PhoneBook.builder()
+                    .id(result.getId()).name(result.getName())
+                    .group(group)
+                    .phoneNumber(phone).email(result.getEmail()).build();
+        } else if (phone.isEmpty() && email.isEmpty()) {
+            update = PhoneBook.builder()
+                    .id(result.getId()).name(name)
+                    .group(group)
+                    .phoneNumber(result.getPhoneNumber()).email(result.getEmail()).build();
+        } else if (name.isEmpty()) {
+            update = PhoneBook.builder()
+                    .id(result.getId()).name(result.getName())
+                    .group(group)
+                    .phoneNumber(phone).email(email).build();
+        } else if (phone.isEmpty()) {
+            update = PhoneBook.builder()
+                    .id(result.getId()).name(name)
+                    .group(group)
+                    .phoneNumber(result.getPhoneNumber()).email(email).build();
+        } else if (email.isEmpty()) {
+            update = PhoneBook.builder()
+                    .id(result.getId()).name(name)
+                    .group(group)
+                    .phoneNumber(phone).email(result.getEmail()).build();
+        } else {
+            update = PhoneBook.builder()
+                    .id(result.getId()).name(name)
+                    .group(group)
+                    .phoneNumber(phone).email(email).build();
+        }
         if (this.phoneBookService.update(update.getId(), update)) {
             this.phoneBookService.saveData();
             System.out.println("결과: 데이터 수정 성공되었습니다.");
@@ -125,7 +168,7 @@ public class ConsoleApplication {
     private IPhoneBook getFindIdConsole(Scanner input, String title) {
         long l = 0L;
         do {
-            System.out.print(title + " ID 번호:");
+            System.out.print(title + " ID 번호(0 제외):");
             String id = input.nextLine();
             try {
                 l = Long.parseLong(id);

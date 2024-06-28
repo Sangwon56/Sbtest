@@ -11,7 +11,7 @@ import java.util.List;
 public class PhoneBookServiceImpl implements IPhoneBookService<IPhoneBook> {
     private List<IPhoneBook> list = new ArrayList<>();
     private final IPhoneBookRepository<IPhoneBook> phoneBookRepository;
-
+    public int removedId;
     public PhoneBookServiceImpl(String arg1, String fileName) throws Exception {
         if ("-j".equals(arg1)) {
             this.phoneBookRepository = new PhoneBookJsonRepository(fileName);
@@ -75,6 +75,10 @@ public class PhoneBookServiceImpl implements IPhoneBookService<IPhoneBook> {
         IPhoneBook find = this.findById(id);
         if ( find != null ) {
             this.list.remove(find);
+            for ( Long i = find.getId() + 1; i <= getMaxId(); i++) {
+                IPhoneBook info = this.findById(i);
+                info.setId(info.getId() - 1);
+            }
             return true;
         }
         return false;
